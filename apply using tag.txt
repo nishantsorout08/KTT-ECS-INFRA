@@ -1,0 +1,28 @@
+export TAG=$(git rev-parse --short HEAD)
+
+# Build and push auth image
+docker build -t 288761766643.dkr.ecr.ap-south-1.amazonaws.com/ktt-backend-auth:$TAG .
+
+aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 288761766643.dkr.ecr.ap-south-1.amazonaws.com
+
+docker push 288761766643.dkr.ecr.ap-south-1.amazonaws.com/ktt-backend-auth:$TAG
+
+#build and push booking images
+docker build -t 288761766643.dkr.ecr.ap-south-1.amazonaws.com/ktt-backend-booking:$TAG .
+
+aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 288761766643.dkr.ecr.ap-south-1.amazonaws.com
+
+docker push 288761766643.dkr.ecr.ap-south-1.amazonaws.com/ktt-backend-booking:$TAG
+
+
+#build and push admin images
+docker build -t 288761766643.dkr.ecr.ap-south-1.amazonaws.com/ktt-backend-admin:$TAG .
+
+aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 288761766643.dkr.ecr.ap-south-1.amazonaws.com
+
+docker push 288761766643.dkr.ecr.ap-south-1.amazonaws.com/ktt-backend-admin:$TAG
+
+# Apply Terraform
+terraform apply -var="image_tag=$TAG" -auto-approve
+
+terraform apply -var="image_tag=de9ab81" -auto-approve

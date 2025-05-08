@@ -1,0 +1,20 @@
+# Initialize Terraform
+terraform init
+terraform plan
+terraform apply -var="image_tag=$TAG" -auto-approve
+
+/*
+#  Create only ECR repositories
+terraform apply -target=aws_ecr_repository.backend_auth -target=aws_ecr_repository.backend_booking -target=aws_ecr_repository.backend_admin -auto-approve
+
+#  Show Docker Push Commands
+terraform output docker_push_commands
+
+#  Manually push Docker images to ECR (copy-paste the commands from output)
+
+# Deploy remaining ECS resources (ECS cluster, tasks, services)
+
+terraform apply -auto-approve
+
+terraform destroy -auto-approve
+*/
