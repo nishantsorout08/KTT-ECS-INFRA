@@ -1,1 +1,1 @@
-# KTT-ECS-INFRA
+# KTT-ECS-INFRA using Capacity Provider
