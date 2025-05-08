@@ -9,8 +9,10 @@ resource "aws_ecs_service" "backend_auth_service" {
   cluster         = aws_ecs_cluster.ecs_cluster.id
   task_definition = aws_ecs_task_definition.auth_task.arn
   desired_count   = 1
-  launch_type     = "EC2"
+
     depends_on = [
+    aws_ecs_task_definition.auth_task,
+    aws_ecs_capacity_provider.ktt_cp,
     aws_lb_listener_rule.auth_rule
   ]
   
@@ -20,13 +22,17 @@ resource "aws_ecs_service" "backend_auth_service" {
     type = "ECS"
   }
 
- health_check_grace_period_seconds = 600  # gives ecs-service a grace time to warm up spring boot 
-
   load_balancer {
     target_group_arn = aws_lb_target_group.auth_tg.arn
     container_name   = "backend-auth-container"
     container_port   = 8080
   }
+ 
+  capacity_provider_strategy {
+    capacity_provider = aws_ecs_capacity_provider.ktt_cp.name
+    weight            = 1
+  }
+
   iam_role = data.aws_iam_role.ecs_service_role.arn  # Reference existing role
 
   deployment_minimum_healthy_percent = 50
@@ -39,8 +45,10 @@ resource "aws_ecs_service" "backend_booking_service" {
   cluster         = aws_ecs_cluster.ecs_cluster.id
   task_definition = aws_ecs_task_definition.booking_task.arn
   desired_count   = 1
-  launch_type     = "EC2"
+
   depends_on = [
+    aws_ecs_task_definition.booking_task,
+    aws_ecs_capacity_provider.ktt_cp,
     aws_lb_listener_rule.booking_rule
   ]
 
@@ -50,12 +58,17 @@ resource "aws_ecs_service" "backend_booking_service" {
     type = "ECS"
   }
   
- health_check_grace_period_seconds = 600  # gives ecs-service a grace time to warm up spring boot 
 
   load_balancer {
     target_group_arn = aws_lb_target_group.booking_tg.arn
     container_name   = "backend-booking-container"
     container_port   = 8082
+  }
+
+
+  capacity_provider_strategy {
+    capacity_provider = aws_ecs_capacity_provider.ktt_cp.name
+    weight            = 1
   }
 
   iam_role = data.aws_iam_role.ecs_service_role.arn  # Reference existing role
@@ -70,8 +83,10 @@ resource "aws_ecs_service" "backend_admin_service" {
   cluster         = aws_ecs_cluster.ecs_cluster.id
   task_definition = aws_ecs_task_definition.admin_task.arn
   desired_count   = 1
-  launch_type     = "EC2"
+
     depends_on = [
+    aws_ecs_task_definition.admin_task,
+    aws_ecs_capacity_provider.ktt_cp,
     aws_lb_listener_rule.admin_rule
   ]
   
@@ -81,13 +96,17 @@ resource "aws_ecs_service" "backend_admin_service" {
     type = "ECS"
   }
 
- health_check_grace_period_seconds = 600  # gives ecs-service a grace time to warm up spring boot 
-
   load_balancer {
     target_group_arn = aws_lb_target_group.admin_tg.arn
     container_name   = "backend-admin-container"
     container_port   = 9002
   }
+ 
+  capacity_provider_strategy {
+    capacity_provider = aws_ecs_capacity_provider.ktt_cp.name
+    weight            = 1
+  }
+
   iam_role = data.aws_iam_role.ecs_service_role.arn  # Reference existing role
 
   deployment_minimum_healthy_percent = 50
